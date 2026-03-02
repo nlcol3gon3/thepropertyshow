@@ -61,7 +61,7 @@ All CSS variables are in `:root` in `style.css`:
 - `--gold: #c9a96e` — Accent gold
 - `--black` / `--dark` / `--dark-2` / `--dark-3` — Dark palette
 
-## Next Steps (Day 2)
+## Next Steps (Version 2)
 
 - [ ] Add real photography from the brand/team
 - [ ] Add Google Maps embed to Contact page
@@ -70,4 +70,4 @@ All CSS variables are in `:root` in `style.css`:
 - [ ] Add WhatsApp floating button
 - [ ] Add cookie consent if needed
 - [ ] SEO meta tags for all inner pages
-- [ ] Deploy to hosting (Netlify, Vercel, or cPanel)
+- [ ] Deploy to hosting (Netlify, Vercel or cPanel)
