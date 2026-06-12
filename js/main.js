@@ -53,7 +53,7 @@
     var navbar = document.getElementById('mainNavbar');
     if (!navbar) return;
     function handleScroll() {
-      navbar.classList.toggle('scrolled', window.scrollY > 60);
+      navbar.classList.toggle('scrolled', window.scrollY > 10);
     }
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
@@ -86,6 +86,59 @@
     mobileMenu.querySelectorAll('a').forEach(function (link) {
       link.addEventListener('click', closeMenu);
     });
+  }
+
+  /* ── DROPDOWN LOCK ─────────────────────────────────────────── */
+  function initNavDropdowns() {
+    var dropdowns = document.querySelectorAll('.nav-dropdown-wrap');
+    if (!dropdowns.length) return;
+
+    function closeDropdown(dropdown) {
+      dropdown.classList.remove('open', 'is-locked');
+      var trigger = dropdown.querySelector('.nav-dropdown-trigger');
+      if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    }
+
+    function closeAll(except) {
+      dropdowns.forEach(function (dropdown) {
+        if (dropdown !== except) closeDropdown(dropdown);
+      });
+    }
+
+    dropdowns.forEach(function (dropdown) {
+      if (dropdown.dataset.dropdownInit === 'true') return;
+      dropdown.dataset.dropdownInit = 'true';
+
+      var trigger = dropdown.querySelector('.nav-dropdown-trigger');
+      if (!trigger) return;
+
+      trigger.setAttribute('aria-expanded', 'false');
+
+      trigger.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var shouldOpen = !dropdown.classList.contains('is-locked');
+        closeAll(dropdown);
+
+        dropdown.classList.toggle('open', shouldOpen);
+        dropdown.classList.toggle('is-locked', shouldOpen);
+        trigger.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+      });
+    });
+
+    if (initNavDropdowns.documentInit !== true) {
+      initNavDropdowns.documentInit = true;
+
+      document.addEventListener('click', function (e) {
+        var clickedInside = e.target.closest && e.target.closest('.nav-dropdown-wrap');
+        if (!clickedInside) closeAll();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeAll();
+      });
+    }
   }
 
   /* ── SCROLL REVEAL ─────────────────────────────────────────── */
@@ -201,6 +254,7 @@
     // Initialise navbar and mobile menu (elements now exist in DOM)
     initNavbar();
     initMobileMenu();
+    initNavDropdowns();
   }
 
   /* ── FOOTER INJECTION CALLBACK ─────────────────────────────── */
@@ -243,6 +297,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     loadInclude('site-header', 'header.html', onHeaderLoaded);
     loadInclude('site-footer', 'footer.html', onFooterLoaded);
+    onHeaderLoaded();
     initReveal();
     initCounters();
     initTilt();
